@@ -24,11 +24,14 @@ class VictorOps:
 		else:
 			raise Exception("Call to VictorOps API failed: %s" % request.status_code)
 
-	def get_oncall_schedule(self, team):
+	def get_oncall_schedule(self, team, daysForward=7, step=0):
 		try:
 			slug = self.get_team_slug(team)
 			endpoint = "/v2/team/%s/oncall/schedule" % slug
-			params = {'daysForward': '2'}
+			params = {
+				'daysForward': daysForward,
+				'step': step
+			}
 			return self.call_api(endpoint=endpoint, params=params)
 		except Exception as e:
 			raise Exception("Can't get oncall schedule for team %s: %s" % (team, e))
