@@ -1,5 +1,6 @@
 import json
 import logging
+import dateutil.parser
 
 def dispatch(victorops, config, arg):
     oncall = Oncall(victorops)
@@ -36,16 +37,30 @@ class Oncall:
             self.log.error(e)
             return "Can't get shift data from VictorOps"
 
+        self.log.info("schedule: %s" % json.dumps(team_oncall, indent=2))
+
         users = []
         for schedules in team_oncall['schedules']:
             for schedule in schedules['schedule']:
                 if schedule['shiftName'] == config['shift']:
                     for r in schedule['rolls']:
-                        users.append(r['onCallUser']['username'])
+                        users.append("%s\t-\t%s" % (r['onCallUser']['username'], self.timerange(r['start'], r['end'])))
         if users:
-            return " # ".join(users)
+            return "Users oncall for shift '%s' of team '%s' (next %s days): \n%s" % \
+                (config['shift'], config['team'], config['daysForward'], "\n".join(users))
         else:
-            return "No configuration for shift '%s' in team '%s'" % (config['shift'], config['team'])
+            return "No configuration for shift '%s' in team '%s'" % \
+                (config['shift'], config['team'])
+
+    def timerange(self, start, stop):
+        begin = dateutil.parser.isoparse(start)
+        end = dateutil.parser.isoparse(stop)
+        if ( (begin.date()) == (end.date()) ):
+            return "%s\t%s - %s" % \
+                (begin.strftime('%Y-%m-%d') ,begin.strftime('%H:%M') ,end.strftime('%H-%M'))
+        else:
+            return "%s %s - %s %s" % \
+                (begin.strftime('%Y-%m-%d'), begin.strftime('%H:%M'), end.strftime('%Y-%m-%d'), end.strftime('%H-%M'))
 
     def shift(self, config, shift_name):
         if not config:
