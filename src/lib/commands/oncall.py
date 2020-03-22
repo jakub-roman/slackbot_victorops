@@ -37,7 +37,7 @@ class Oncall:
             self.log.error(e)
             return "Can't get shift data from VictorOps"
 
-        self.log.info("schedule: %s" % json.dumps(team_oncall, indent=2))
+        self.log.debug("schedule: %s" % json.dumps(team_oncall, indent=2))
 
         users = []
         for schedules in team_oncall['schedules']:

@@ -6,23 +6,17 @@ oncall:
     # you'll call slackbot with this argument
     prg:
       # name of this shift team
-      team: WebOps - Prague
+      team: My team name
       # victorops shift name
-      shift: PRG
+      shift: My shift name
       # number of step in escalation policy that calls rotation with this shift...
       # yeah... victorops API is complicated...
       step: 0
       # lookup this many days in future
       daysForward: 7
 
-    ffx:
-      team: Jakub - core
-      shift: FFX
-      step: 0
-      daysForward: 7
-
     24x7:
-      team: Jakub - core
-      shift: "24x7"
+      team: My team name
+      shift: "24x7 shift"
       step: 1
       daysForward: 7
